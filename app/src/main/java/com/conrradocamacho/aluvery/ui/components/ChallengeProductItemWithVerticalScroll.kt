@@ -1,9 +1,5 @@
-package com.conrradocamacho.aluvery
+package com.conrradocamacho.aluvery.ui.components
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -22,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,29 +33,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.conrradocamacho.aluvery.ui.theme.AluveryTheme
+import com.conrradocamacho.aluvery.R
 import com.conrradocamacho.aluvery.ui.theme.Purple500
 import com.conrradocamacho.aluvery.ui.theme.Teal200
 
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            AluveryTheme {
-                Surface(
-                    modifier = Modifier
-                        .padding(top = 24.dp)
-                ) {
-                    ProductSection()
-                }
-            }
-        }
-    }
-}
-
+@Preview(showBackground = true)
 @Composable
-fun ProductSection() {
+private fun ChallengePreview() {
     Column {
         Text(
             text = "Promoções",
@@ -82,23 +63,24 @@ fun ProductSection() {
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            ProductItem()
-            ProductItem()
-            ProductItem()
+            ProductItem(LoremIpsum(30).values.first())
+            ProductItem(null)
+            ProductItem(LoremIpsum(10).values.first())
         }
     }
 }
 
 @Composable
-private fun ProductItem() {
+private fun ProductItem(text: String?) {
     Surface(
         shape = RoundedCornerShape(15.dp),
         shadowElevation = 4.dp
     ) {
         Column(
             modifier = Modifier
-                .heightIn(250.dp, 300.dp)
+                .heightIn(250.dp, 255.dp)
                 .width(200.dp)
+                .verticalScroll(rememberScrollState()),
         ) {
             val imageSize = 100.dp
             Box(
@@ -147,19 +129,14 @@ private fun ProductItem() {
                     fontWeight = FontWeight(400)
                 )
             }
+            text?.let {
+                Text(
+                    text = it,
+                    modifier = Modifier
+                        .background(Purple500)
+                        .padding(16.dp)
+                )
+            }
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-private fun ProductSectionPreview() {
-    ProductSection()
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun ProductItemPreview() {
-    ProductItem()
-}
-
