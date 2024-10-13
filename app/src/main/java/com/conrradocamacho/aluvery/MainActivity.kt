@@ -6,8 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,6 +19,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
@@ -46,19 +50,49 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier
                         .padding(top = 24.dp)
                 ) {
-                    ProductItem()
+                    ProductSection()
                 }
             }
         }
     }
 }
 
-@Preview(showBackground = true)
+@Composable
+fun ProductSection(modifier: Modifier = Modifier) {
+    Column {
+        Text(
+            text = "Promoções",
+            modifier = Modifier
+                .padding(
+                    start = 16.dp,
+                    top = 16.dp,
+                    end = 16.dp
+                ),
+            fontSize = 20.sp,
+            fontWeight = FontWeight(400)
+        )
+        Row(
+            modifier = Modifier
+                .padding(
+                    top = 8.dp,
+                    bottom = 16.dp
+                )
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Spacer(modifier = Modifier)
+            ProductItem()
+            ProductItem()
+            ProductItem()
+            Spacer(modifier = Modifier)
+        }
+    }
+}
+
 @Composable
 private fun ProductItem() {
     Surface(
-        modifier = Modifier
-            .padding(8.dp),
         shape = RoundedCornerShape(15.dp),
         shadowElevation = 4.dp
     ) {
@@ -72,7 +106,14 @@ private fun ProductItem() {
                 modifier = Modifier
                     .height(imageSize)
                     .fillMaxWidth()
-                    .background(brush = Brush.horizontalGradient(colors = listOf(Purple500, Teal200)))
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(
+                                Purple500,
+                                Teal200
+                            )
+                        )
+                    )
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_launcher_background),
@@ -84,8 +125,10 @@ private fun ProductItem() {
                         .align(Alignment.BottomCenter)
                 )
             }
-            Spacer(modifier = Modifier
-                .height(imageSize / 2))
+            Spacer(
+                modifier = Modifier
+                    .height(imageSize / 2)
+            )
             Column(
                 modifier = Modifier
                     .padding(16.dp)
@@ -107,5 +150,17 @@ private fun ProductItem() {
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ProductSectionPreview() {
+    ProductSection()
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ProductItemPreview() {
+    ProductItem()
 }
 
