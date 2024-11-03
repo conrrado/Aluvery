@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.conrradocamacho.aluvery.R
 import com.conrradocamacho.aluvery.extensions.toBrazilianCurrency
 import com.conrradocamacho.aluvery.model.Product
@@ -62,15 +63,16 @@ fun ProductItem(product: Product) {
                         )
                     )
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.placeholder),
+                AsyncImage(
+                    model = product.image,
                     contentDescription = "Image of product",
                     modifier = Modifier
                         .offset(y = imageSize / 2)
                         .size(imageSize)
                         .clip(shape = CircleShape)
                         .align(Alignment.BottomCenter),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    placeholder = painterResource(id = R.drawable.placeholder)
                 )
             }
             Spacer(
