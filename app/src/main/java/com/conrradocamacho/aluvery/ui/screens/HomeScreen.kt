@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -24,8 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.conrradocamacho.aluvery.model.Product
+import com.conrradocamacho.aluvery.sampledata.sampleProducts
 import com.conrradocamacho.aluvery.sampledata.sampleSections
-import com.conrradocamacho.aluvery.ui.components.ProductSection
+import com.conrradocamacho.aluvery.ui.components.CardProductItem
 import com.conrradocamacho.aluvery.ui.theme.AluveryTheme
 
 @Composable
@@ -40,7 +42,7 @@ fun HomeScreen(
                 text = it
             },
             Modifier
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                .padding(16.dp)
                 .fillMaxWidth(),
             shape = RoundedCornerShape(100),
             leadingIcon = {
@@ -60,15 +62,21 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(vertical = 16.dp)
+            contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            sections.forEach {
-                val title = it.key
-                val products = it.value
-                item {
-                    ProductSection(title = title, products = products)
-                }
+            items(sampleProducts) {
+                CardProductItem(
+                    it,
+                    Modifier.padding(horizontal = 16.dp),
+                )
             }
+//            sections.forEach {
+//                val title = it.key
+//                val products = it.value
+//                item {
+//                    ProductSection(title = title, products = products)
+//                }
+//            }
         }
     }
 }
