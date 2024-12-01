@@ -1,4 +1,4 @@
-package com.conrradocamacho.aluvery
+package com.conrradocamacho.aluvery.ui.activities
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
