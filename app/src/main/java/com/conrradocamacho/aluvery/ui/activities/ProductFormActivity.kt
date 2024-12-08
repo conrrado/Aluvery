@@ -42,11 +42,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.conrradocamacho.aluvery.R
+import com.conrradocamacho.aluvery.dao.ProductDao
 import com.conrradocamacho.aluvery.model.Product
 import com.conrradocamacho.aluvery.ui.theme.AluveryTheme
 import java.math.BigDecimal
 
 class ProductFormActivity : ComponentActivity() {
+
+    private val dao = ProductDao()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +64,10 @@ class ProductFormActivity : ComponentActivity() {
                         modifier = Modifier
                             .padding(innerPadding)
                     ) {
-                        ProductFormScreen()
+                        ProductFormScreen(onSaveClick = { product ->
+                            dao.save(product)
+                            finish()
+                        })
                     }
                 }
             }
@@ -70,7 +76,10 @@ class ProductFormActivity : ComponentActivity() {
 }
 
 @Composable
-fun ProductFormScreen(modifier: Modifier = Modifier) {
+fun ProductFormScreen(
+    modifier: Modifier = Modifier,
+    onSaveClick: (Product) -> Unit = {}
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -195,6 +204,7 @@ fun ProductFormScreen(modifier: Modifier = Modifier) {
                     description = description
                 )
                 Log.i("ProductFormScreen", "ProductFormScreen: $product")
+                onSaveClick(product)
             },
             modifier = Modifier.fillMaxWidth(),
         ) {
