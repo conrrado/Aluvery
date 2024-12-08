@@ -18,8 +18,10 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -32,6 +34,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -102,7 +107,11 @@ fun ProductFormScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             label = {
                 Text(text = "Url da imagem")
-            }
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Uri,
+                imeAction = ImeAction.Next
+            )
         )
 
         var name by remember { mutableStateOf("") }
@@ -115,19 +124,44 @@ fun ProductFormScreen(modifier: Modifier = Modifier) {
             label = {
                 Text(text = "Nome")
             },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next,
+                capitalization = KeyboardCapitalization.Words
+            )
         )
 
         var price by remember { mutableStateOf("") }
+        var isPriceError by remember { mutableStateOf(false) }
         TextField(
             value = price,
             onValueChange = {
+                isPriceError = try {
+                    BigDecimal(it)
+                    false
+                } catch (e: IllegalArgumentException) {
+                    it.isNotEmpty()
+                }
                 price = it
             },
             modifier = Modifier.fillMaxWidth(),
             label = {
                 Text(text = "Preço")
             },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Decimal,
+                imeAction = ImeAction.Next
+            ),
+            isError = isPriceError
         )
+        if (isPriceError) {
+            Text(
+                text = "Preço deve ser um número decimal",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+        }
 
         var description by remember { mutableStateOf("") }
         TextField(
@@ -141,6 +175,10 @@ fun ProductFormScreen(modifier: Modifier = Modifier) {
             label = {
                 Text(text = "Descrição")
             },
+            keyboardOptions = KeyboardOptions(
+               keyboardType = KeyboardType.Text,
+                capitalization = KeyboardCapitalization.Sentences
+            )
         )
 
         Button(
