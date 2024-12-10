@@ -25,35 +25,48 @@ import com.conrradocamacho.aluvery.ui.components.ProductSection
 import com.conrradocamacho.aluvery.ui.components.SearchTextField
 import com.conrradocamacho.aluvery.ui.theme.AluveryTheme
 
+class HomeScreenUiState(searchText: String = "") {
+
+    var text by mutableStateOf(searchText)
+        private set
+
+    val searchedProducts get() =
+        if (text.isNotBlank()) {
+            sampleProducts.filter {
+                it.name.contains(text, ignoreCase = true) ||
+                        it.description?.contains(text, ignoreCase = true) ?: false
+            }
+        } else emptyList()
+
+    fun isShowSections() = text.isBlank()
+
+    val onSearchChange: (String) -> Unit = {
+        text = it
+    }
+}
+
 @Composable
 fun HomeScreen(
     sections: Map<String, List<Product>>,
-    searchText: String = ""
+    state: HomeScreenUiState = HomeScreenUiState("")
 ) {
     Column {
-        var text by remember { mutableStateOf(searchText) }
-        SearchTextField(
-            searchText = text,
-            modifier = Modifier.padding(16.dp),
-            onSearchChange = {
-                text = it
-            }
-        )
-        val searchedProducts = remember(text) {
-            if (text.isNotBlank()) {
-                sampleProducts.filter {
-                    it.name.contains(text, ignoreCase = true) ||
-                            it.description?.contains(text, ignoreCase = true) ?: false
-                }
-            } else emptyList()
+        val searchedProducts = remember(state.text) {
+            state.searchedProducts
         }
+        SearchTextField(
+            searchText = state.text,
+            modifier = Modifier.padding(16.dp),
+            onSearchChange = state.onSearchChange
+        )
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            if (text.isBlank()) {
+            if (state.isShowSections()) {
                 sections.forEach {
                     val title = it.key
                     val products = it.value
@@ -105,7 +118,7 @@ private fun HomeScreenWithSearchTextPreview() {
             ) {
                 HomeScreen(
                     sampleSections,
-                    searchText = "pizza"
+                    state = HomeScreenUiState("pizza")
                 )
             }
         }
