@@ -14,12 +14,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.conrradocamacho.aluvery.dao.ProductDao
-import com.conrradocamacho.aluvery.sampledata.sampleCandies
-import com.conrradocamacho.aluvery.sampledata.sampleDrinks
 import com.conrradocamacho.aluvery.sampledata.sampleSections
 import com.conrradocamacho.aluvery.ui.screens.HomeScreen
 import com.conrradocamacho.aluvery.ui.screens.HomeScreenUiState
@@ -38,17 +35,8 @@ class MainActivity : ComponentActivity() {
                     Intent(this, ProductFormActivity::class.java)
                 )
             }) {
-                val sections = mapOf(
-                    "Todos produtos" to dao.products(),
-                    "Promoções" to sampleDrinks + sampleCandies,
-                    "Doces" to sampleCandies,
-                    "Bebidas" to sampleDrinks
-                )
-                val state = remember { HomeScreenUiState() }
-                HomeScreen(
-                    sections = sections,
-                    state = state
-                )
+                val products = dao.products()
+                HomeScreen(products = products)
             }
         }
     }
@@ -83,6 +71,6 @@ fun App(
 @Composable
 private fun AppPreview() {
     App {
-        HomeScreen(sampleSections)
+        HomeScreen(HomeScreenUiState(sections = sampleSections))
     }
 }

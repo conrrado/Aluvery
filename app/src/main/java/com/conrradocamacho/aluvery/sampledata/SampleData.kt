@@ -1,10 +1,8 @@
 package com.conrradocamacho.aluvery.sampledata
 
 import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
-import com.conrradocamacho.aluvery.R
 import com.conrradocamacho.aluvery.model.Product
 import java.math.BigDecimal
-import kotlin.random.Random
 
 val sampleCandies = listOf(
     Product(
