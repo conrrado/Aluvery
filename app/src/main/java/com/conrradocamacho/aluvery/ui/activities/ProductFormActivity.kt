@@ -64,10 +64,15 @@ class ProductFormActivity : ComponentActivity() {
                         modifier = Modifier
                             .padding(innerPadding)
                     ) {
-                        ProductFormScreen(onSaveClick = { product ->
-                            dao.save(product)
-                            finish()
-                        })
+                        val state = remember {
+                            ProductFormUIState(
+                                onSaveClick = { product ->
+                                    dao.save(product)
+                                    finish()
+                                }
+                            )
+                        }
+                        ProductFormScreen(state = state)
                     }
                 }
             }
@@ -75,13 +80,63 @@ class ProductFormActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun ProductFormScreen(
-    modifier: Modifier = Modifier,
+class ProductFormUIState(
     onSaveClick: (Product) -> Unit = {}
 ) {
+    var url by mutableStateOf("")
+    val onValueChangeUrl: (String) -> Unit = {
+        url = it
+    }
+
+    var name by mutableStateOf("")
+    val onValueChangeName: (String) -> Unit = {
+        name = it
+    }
+
+    var price by mutableStateOf("")
+    var isPriceError by mutableStateOf(false)
+    val onValueChangePrice: (String) -> Unit = {
+        isPriceError = try {
+            BigDecimal(it)
+            false
+        } catch (e: IllegalArgumentException) {
+            it.isNotEmpty()
+        }
+        price = it
+    }
+
+    var description by mutableStateOf("")
+    val onValueChangeDescription: (String) -> Unit = {
+        description = it
+    }
+
+    val onSaveClick = {
+        val convertedPrice = try {
+            BigDecimal(price)
+        } catch (e: NumberFormatException) {
+            BigDecimal.ZERO
+        }
+        val product = Product(
+            name = name,
+            image = url,
+            price = convertedPrice,
+            description = description
+        )
+        onSaveClick(product)
+    }
+}
+
+@Composable
+fun ProductFormScreen(
+    state: ProductFormUIState = ProductFormUIState()
+) {
+    val url = state.url
+    val name = state.name
+    val price = state.price
+    val isPriceError = state.isPriceError
+    val description = state.description
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
@@ -95,7 +150,6 @@ fun ProductFormScreen(
             fontSize = 28.sp
         )
 
-        var url by remember { mutableStateOf("") }
         if (url.isNotBlank()) {
             AsyncImage(
                 model = url,
@@ -110,9 +164,7 @@ fun ProductFormScreen(
         }
         TextField(
             value = url,
-            onValueChange = {
-                url = it
-            },
+            onValueChange = state.onValueChangeUrl,
             modifier = Modifier.fillMaxWidth(),
             label = {
                 Text(text = "Url da imagem")
@@ -123,12 +175,9 @@ fun ProductFormScreen(
             )
         )
 
-        var name by remember { mutableStateOf("") }
         TextField(
             value = name,
-            onValueChange = {
-                name = it
-            },
+            onValueChange = state.onValueChangeName,
             modifier = Modifier.fillMaxWidth(),
             label = {
                 Text(text = "Nome")
@@ -140,19 +189,9 @@ fun ProductFormScreen(
             )
         )
 
-        var price by remember { mutableStateOf("") }
-        var isPriceError by remember { mutableStateOf(false) }
         TextField(
             value = price,
-            onValueChange = {
-                isPriceError = try {
-                    BigDecimal(it)
-                    false
-                } catch (e: IllegalArgumentException) {
-                    it.isNotEmpty()
-                }
-                price = it
-            },
+            onValueChange = state.onValueChangePrice,
             modifier = Modifier.fillMaxWidth(),
             label = {
                 Text(text = "Preço")
@@ -172,12 +211,9 @@ fun ProductFormScreen(
             )
         }
 
-        var description by remember { mutableStateOf("") }
         TextField(
             value = description,
-            onValueChange = {
-                description = it
-            },
+            onValueChange = state.onValueChangeDescription,
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = 100.dp),
@@ -191,21 +227,7 @@ fun ProductFormScreen(
         )
 
         Button(
-            onClick = {
-                val convertedPrice = try {
-                    BigDecimal(price)
-                } catch (e: NumberFormatException) {
-                    BigDecimal.ZERO
-                }
-                val product = Product(
-                    name = name,
-                    image = url,
-                    price = convertedPrice,
-                    description = description
-                )
-                Log.i("ProductFormScreen", "ProductFormScreen: $product")
-                onSaveClick(product)
-            },
+            onClick = state.onSaveClick,
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(text = "Salvar")
